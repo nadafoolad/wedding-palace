@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="stylesheet.css">
+</head>
+<body>
+    <div class="container">
+
+        <h1>Wedding Palace</h1>
+
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="dresses.html">Dresses</a>
+            <a href="guests.html">Guests</a>
+            <a href="jewellery.html">Jewellery</a>
+            <a href="making-of.html">Making Of</a>
+            <a href="our-story.html">Our Story</a>
+        </nav>
+    </div>
+        <section id="video-section">
+        
+        <div class="video-container">
+            <video autoplay loop muted>
+                <source src="vid.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        
+    </section>
+
+    <div class="container">
+        <section>
+            <h2>Where your journey begins!</h2>
+            <p style="text-align:center;">
+ Wedding Palace operates as an ideal location which combines formal wedding occasions with stunning celebration arrangements. We select the finest options from our collection which includes wedding gowns and guest attire and jewelry to create a memorable wedding experience. Our collections are available for viewing at the registration page which provides special offers and customized recommendations.            </p>
+        </section>
+
+        <section class="form-section">
+            <h3>Register</h3>
+            <form id="registration-form" onsubmit="event.preventDefault(); validateForm();">
+                
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" name="firstName" required>
+
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" name="lastName" required>
+
+                <label for="mobile">Mobile Number (8 digits)</label>
+                <input type="text" id="mobile" name="mobile" required>
+
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
+
+                <button type="submit">Submit</button>
+            </form>
+            
+            <div id="form-message"></div>
+        </section>
+        
+        <section class="inquiry-section">
+            <h2>Inquiries about the dresses & jewellery</h2>
+            <p style="text-align:center;">
+       If you want to know more about the cost of the dresses or jewellery you adore, upload it here!            </p>
+            <form id="inquiry-form" onsubmit="event.preventDefault(); handleInquirySubmit();">
+                <label for="inquiryEmail">Your Email (for reply)</label>
+                <input type="email" id="inquiryEmail" name="inquiryEmail" required>
+
+                <label for="itemImage">Picture of the Item (Optional)</label>
+                <input type="file" id="itemImage" class="file-upload-input" accept="image/*">
+                
+                <label for="itemImage" class="file-upload-label">
+                    Choose Image File
+                </label>
+                <span id="file-name" style="margin-left: 10px;">No file chosen</span>
+                
+                <label for="inquiryMessage">Your Question or Details</label>
+                <textarea id="inquiryMessage" rows="4" required></textarea>
+
+                <button type="submit">Send Inquiry</button>
+            </form>
+            <div id="inquiry-message"></div>
+        </section>
+
+
+    </div>
+
+     <footer>
+        <div class="container">
+            <p>&copy; 2025 Wedding Palace. All Rights Reserved.</p>
+             <p style="margin-top: 5px;"> <a href="mailto:info@weddingpalace.com">info@weddingpalace.com</a> </p>
+        </div>
+    </footer>
+
+
+    <script>
+
+        function validateForm() {
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const mobile = document.getElementById('mobile').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const messageDiv = document.getElementById('form-message');
+            messageDiv.className = '';
+            messageDiv.innerHTML = '';
+
+            let isValid = true;
+            let errorMessages = [];
+
+            if (!firstName || !lastName || !mobile || !email) {
+                errorMessages.push('All fields must be filled out.');
+                isValid = false;
+            }
+
+            const mobilePattern = /^\d{8}$/;
+            if (!mobilePattern.test(mobile)) {
+                errorMessages.push('Mobile Number must be exactly 8 digits.');
+                isValid = false;
+            }
+
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                errorMessages.push('Please enter a valid email address.');
+                isValid = false;
+            }
+
+            if (isValid) {
+                const fullName = `${firstName} ${lastName}`;
+                localStorage.setItem('userName', fullName);
+                
+                messageDiv.classList.add('success');
+                messageDiv.innerHTML = `Success! Welcome, ${fullName}. Your details have been recorded. You can now browse the full collections.`;
+                
+                document.getElementById('registration-form').reset(); 
+                displayWelcomeBackMessage();
+            } else {
+                messageDiv.classList.add('error');
+                messageDiv.innerHTML = '<strong>Validation Errors:</strong><ul>' + errorMessages.map(msg => `<li>${msg}</li>`).join('') + '</ul>';
+            }
+        }
+        
+        function displayWelcomeBackMessage() {
+            const storedName = localStorage.getItem('userName');
+            const formSection = document.querySelector('.form-section');
+            let welcomeP = document.getElementById('welcome-back-msg');
+            
+            if (storedName) {
+                if (!welcomeP) {
+                    welcomeP = document.createElement('p');
+                    welcomeP.id = 'welcome-back-msg';
+                    welcomeP.classList.add('welcome-message'); 
+                    formSection.insertAdjacentElement('beforebegin', welcomeP);
+                }
+                welcomeP.innerHTML = `Welcome back, ${storedName}! Enjoy the Wedding Palace collections.`;
+            }
+        }
+        
+        window.onload = function() {
+            displayWelcomeBackMessage();
+            
+            const fileInput = document.getElementById('itemImage');
+            const fileNameSpan = document.getElementById('file-name');
+            fileInput.addEventListener('change', function() {
+                if (fileInput.files.length > 0) {
+                    fileNameSpan.textContent = fileInput.files[0].name;
+                } else {
+                    fileNameSpan.textContent = 'No file chosen';
+                }
+            });
+        };
+
+
+        function handleInquirySubmit() {
+            const email = document.getElementById('inquiryEmail').value.trim();
+            const message = document.getElementById('inquiryMessage').value.trim();
+            const imageFile = document.getElementById('itemImage').files[0];
+            const inquiryMessageDiv = document.getElementById('inquiry-message');
+            inquiryMessageDiv.className = '';
+
+            if (!email || !message) {
+                inquiryMessageDiv.classList.add('error');
+                inquiryMessageDiv.innerHTML = 'Please provide your email and a message for the inquiry.';
+                return;
+            }
+
+            const fileName = imageFile ? imageFile.name : 'No image attached';
+
+            inquiryMessageDiv.classList.add('success');
+            inquiryMessageDiv.innerHTML = `
+                Thank you for your inquiry sent from ${email}!<br>
+                Item: <strong>${fileName}</strong><br>
+                We will review your request and reply to you soon.
+            `;
+            
+            document.getElementById('inquiry-form').reset();
+            document.getElementById('file-name').textContent = 'No file chosen';
+        }
+    </script>
+
+</body>
+</html>
